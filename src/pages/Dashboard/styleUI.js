@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import clsx from "clsx";
+import { deepPurple, deepOrange } from "@material-ui/core/colors";
 
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -96,5 +95,14 @@ export const useStyles = makeStyles((theme) => ({
   },
   fixedHeight: {
     height: 240,
+  },
+
+  orange: {
+    color: theme.palette.getContrastText(deepOrange[500]),
+    backgroundColor: deepOrange[500],
+  },
+  purple: {
+    color: theme.palette.getContrastText(deepPurple[500]),
+    backgroundColor: deepPurple[500],
   },
 }));

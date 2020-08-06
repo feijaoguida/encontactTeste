@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
-import { FaFilter, FaSearch } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
 
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -15,8 +15,6 @@ import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
 import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import Link from "@material-ui/core/Link";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -32,6 +30,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
 import Avatar from "@material-ui/core/Avatar";
+import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 
@@ -40,7 +39,6 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
 import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 import StarBorder from "@material-ui/icons/StarBorder";
 import DraftsIcon from "@material-ui/icons/Drafts";
 import SendIcon from "@material-ui/icons/Send";
@@ -48,15 +46,12 @@ import Icon from "@material-ui/core/Icon";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
-import { mainListItems, secondaryListItems } from "./listItems";
 import {
   orange,
   lightBlue,
   deepPurple,
   deepOrange,
 } from "@material-ui/core/colors";
-import Orders from "./Orders";
-
 import { useTranslation } from "react-i18next";
 
 // For Switch Theming
@@ -129,7 +124,7 @@ function Copyright() {
 
 export default function Dashboard() {
   const [menus, setMenu] = useState([]);
-  const [content, setContent] = useState([]);
+  const [contents, setContent] = useState([]);
   const [colapseOpen, setColapseOpen] = useState(true);
 
   const userLogged = getUser();
@@ -178,15 +173,6 @@ export default function Dashboard() {
   const handleClickColapse = () => {
     setColapseOpen(!colapseOpen);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-  useEffect(() => {
-    async function loadMenus() {
-      const response = await api.get("menus");
-      setMenu(response.data);
-    }
-    loadMenus();
-  }, []);
 
   const [state, setState] = React.useState({
     checkedA: true,
@@ -199,10 +185,19 @@ export default function Dashboard() {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
 
+  // Carrega do menu ao carregar a pagina
+  useEffect(() => {
+    async function loadMenus() {
+      const response = await api.get("menus");
+      setMenu(response.data);
+    }
+    loadMenus();
+  }, []);
+
+  //load itens do menu e carraga o estado Contents
   async function handleClickMenu(idMenu) {
     const response = await api.get(`items/${idMenu}`);
     setContent(response.data.subMenuItems);
-    console.log(response.data.subMenuItems);
   }
 
   return (
@@ -257,15 +252,14 @@ export default function Dashboard() {
         >
           <div className={classes.drawerGroupHeader}>
             <div className={classes.drawerHeader}>
-              <Button
+              <Avatar
                 aria-controls="customized-menu"
                 aria-haspopup="true"
                 variant="contained"
-                color="primary"
                 onClick={handleClick}
               >
                 OW
-              </Button>
+              </Avatar>
               <StyledMenu
                 id="customized-menu"
                 anchorEl={anchorEl}
@@ -370,34 +364,57 @@ export default function Dashboard() {
           </Container>
           <Container maxWidth="lg" className={classes.container}>
             <Card className={classes.card}>
-              <CardContent className={classes.contentRow}>
-                <FormGroup row>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={state.checkedB}
-                        onChange={handleChange}
-                        name="checkedB"
-                        color="primary"
-                      />
-                    }
-                    label="Primary"
-                  />
-                </FormGroup>
-                <Typography
-                  className={"MuiTypography--heading"}
-                  variant={"h6"}
-                  gutterBottom
-                >
-                  Nature Around Us
-                </Typography>
-              </CardContent>
+              {contents.map((content) => (
+                <CardContent className={classes.contentRow} key={content.id}>
+                  <FormGroup row>
+                    <Avatar className={classes.orange}>OW</Avatar>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={state.checkedB}
+                          onChange={handleChange}
+                          name="checkedB"
+                          color="primary"
+                        />
+                      }
+                      label="Primary"
+                    />
+                  </FormGroup>
+                  <div>
+                    <Typography
+                      className={"MuiTypography--heading"}
+                      variant={"subtitle1"}
+                      gutterBottom
+                    >
+                      {content.name}
+                    </Typography>
+                    <br />
+                    <Typography
+                      className={"MuiTypography--heading"}
+                      variant={"body1"}
+                      gutterBottom
+                    >
+                      {content.subject}
+                    </Typography>
+                    <br />
+                    <Typography
+                      className={"MuiTypography--heading"}
+                      variant={"subtitle2"}
+                      gutterBottom
+                    >
+                      {content.name}
+                    </Typography>
+                  </div>
+                  <AvatarGroup max={4}>
+                    {content.users.map((user) => (
+                      <Avatar className={classes.orange} key={user}>
+                        {user}OW
+                      </Avatar>
+                    ))}
+                  </AvatarGroup>
+                </CardContent>
+              ))}
             </Card>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>TEste paper</Paper>
-              </Grid>
-            </Grid>
             <Box pt={4}>
               <Copyright />
             </Box>
