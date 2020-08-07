@@ -77,14 +77,36 @@ export const useStyles = makeStyles((theme) => ({
     height: "100vh",
     overflow: "auto",
   },
+  card: {
+    padding: theme.spacing(2),
+  },
   contentRow: {
     flexGrow: 1,
     display: "flex",
     flexDirection: "row",
     overflow: "auto",
+    alignItems: "center",
+    justifyContent: "space-between",
+    background: "red",
+  },
+  button: {
+    marginRight: 10,
+  },
+  row: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "row",
+    overflow: "hide",
+    alignItems: "center",
+  },
+  divider: {
+    backgroundColor: "#d9e2ee",
+    margin: "0 20px",
   },
   container: {
-    paddingTop: theme.spacing(4),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(4),
   },
   paper: {

@@ -163,6 +163,7 @@ export const DivActions = styled.div`
   justify-content: space-between;
   width: 100%;
   align-items: center;
+  overflow: auto;
 `;
 
 export const Actions = styled.div`
@@ -170,6 +171,7 @@ export const Actions = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 10px;
+  margin-right: 5px;
 `;
 
 export const ButtonPrimary = styled(Button)`
@@ -229,7 +231,7 @@ export const CardUsers = styled.div`
   background-color: cyan;
   color: blue;
   margin-left: -6px;
-  font-size: 1.2em;
+  font-size: 1.2em; 
   border-radius: 50%;
   border: solid 1px blue;
   padding: 5px;

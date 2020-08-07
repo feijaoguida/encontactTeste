@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
-import { FaFilter } from "react-icons/fa";
 
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -24,27 +23,28 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Collapse from "@material-ui/core/Collapse";
-
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-
 import Avatar from "@material-ui/core/Avatar";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+// For Switch Theming
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { Button } from "@material-ui/core";
 
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import StarBorder from "@material-ui/icons/StarBorder";
-import DraftsIcon from "@material-ui/icons/Drafts";
 import SendIcon from "@material-ui/icons/Send";
 import Icon from "@material-ui/core/Icon";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+
+import { FaFilter } from "react-icons/fa";
 
 import {
   orange,
@@ -52,16 +52,10 @@ import {
   deepPurple,
   deepOrange,
 } from "@material-ui/core/colors";
+
 import { useTranslation } from "react-i18next";
-
-// For Switch Theming
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
-
 import { getUser } from "../../services/auth";
-
 import { useStyles } from "./styleUI";
-
 import api from "../../services/api";
 import * as s from "./styles";
 
@@ -160,7 +154,7 @@ export default function Dashboard() {
     setOpenDrawer(false);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -174,7 +168,7 @@ export default function Dashboard() {
     setColapseOpen(!colapseOpen);
   };
 
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     checkedA: true,
     checkedB: true,
     checkedF: true,
@@ -273,18 +267,6 @@ export default function Dashboard() {
                   </ListItemIcon>
                   <ListItemText primary="Sent mail" />
                 </StyledMenuItem>
-                <StyledMenuItem>
-                  <ListItemIcon>
-                    <DraftsIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Drafts" />
-                </StyledMenuItem>
-                <StyledMenuItem>
-                  <ListItemIcon>
-                    <InboxIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Inbox" />
-                </StyledMenuItem>
               </StyledMenu>
             </div>
             <div className={classes.toolbarIcon}>
@@ -365,54 +347,45 @@ export default function Dashboard() {
           <Container maxWidth="lg" className={classes.container}>
             <Card className={classes.card}>
               {contents.map((content) => (
-                <CardContent className={classes.contentRow} key={content.id}>
-                  <FormGroup row>
-                    <Avatar className={classes.orange}>OW</Avatar>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={state.checkedB}
-                          onChange={handleChange}
-                          name="checkedB"
-                          color="primary"
+                <>
+                  <CardContent className={classes.contentRow} key={content.id}>
+                    <div className={classes.row}>
+                      <Avatar className={classes.orange}>OW</Avatar>
+                      <FormGroup row>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={state.checkedB}
+                              onChange={handleChange}
+                              name="checkedA"
+                              color="primary"
+                              id="CheckA"
+                            />
+                          }
                         />
-                      }
-                      label="Primary"
-                    />
-                  </FormGroup>
-                  <div>
-                    <Typography
-                      className={"MuiTypography--heading"}
-                      variant={"subtitle1"}
-                      gutterBottom
-                    >
-                      {content.name}
-                    </Typography>
-                    <br />
-                    <Typography
-                      className={"MuiTypography--heading"}
-                      variant={"body1"}
-                      gutterBottom
-                    >
-                      {content.subject}
-                    </Typography>
-                    <br />
-                    <Typography
-                      className={"MuiTypography--heading"}
-                      variant={"subtitle2"}
-                      gutterBottom
-                    >
-                      {content.name}
-                    </Typography>
-                  </div>
-                  <AvatarGroup max={4}>
-                    {content.users.map((user) => (
-                      <Avatar className={classes.orange} key={user}>
-                        {user}OW
-                      </Avatar>
-                    ))}
-                  </AvatarGroup>
-                </CardContent>
+                      </FormGroup>
+                      <label htmlFor="CheckA">
+                        <Typography variant={"h6"}>{content.name}</Typography>
+                        <Typography variant={"body1"}>
+                          {content.subject}
+                        </Typography>
+
+                        <Typography variant={"subtitle2"}>
+                          {content.name}
+                        </Typography>
+                      </label>
+                    </div>
+                    <AvatarGroup max={4}>
+                      {content.users.map((user) => (
+                        <Avatar className={classes.orange} key={user}>
+                          {user}
+                        </Avatar>
+                      ))}
+                    </AvatarGroup>
+                  </CardContent>
+
+                  <Divider variant={"middle"} className={classes.divider} />
+                </>
               ))}
             </Card>
             <Box pt={4}>
