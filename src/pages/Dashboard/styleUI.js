@@ -121,10 +121,25 @@ export const useStyles = makeStyles((theme) => ({
 
   orange: {
     color: theme.palette.getContrastText(deepOrange[500]),
-    backgroundColor: deepOrange[500],
+    backgroundColor: theme.palette.primary,
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
-    backgroundColor: deepPurple[500],
+    backgroundColor: theme.palette.primary,
+  },
+
+  checkVisible: {
+    display: "flex",
+  },
+  checkInvisible: {
+    display: "none",
+  },
+  avatarVisible: {
+    display: "flex",
+    marginRight: "4px",
+    backgroundColor: theme.palette.primary,
+  },
+  avatarInvisible: {
+    display: "none",
   },
 }));

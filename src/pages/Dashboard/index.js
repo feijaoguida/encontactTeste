@@ -15,7 +15,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
 import Container from "@material-ui/core/Container";
 import { List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { Menu, MenuItem } from "@material-ui/core";
 
@@ -34,7 +33,6 @@ import { Button } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-
 import StarBorder from "@material-ui/icons/StarBorder";
 import SendIcon from "@material-ui/icons/Send";
 import Icon from "@material-ui/core/Icon";
@@ -146,8 +144,6 @@ export default function Dashboard() {
     setColapseOpen(!colapseOpen);
   };
 
-  const [state, setState] = useState({ checked: [0] });
-
   // Carrega menu ao carregar a pagina
   useEffect(() => {
     async function loadMenus() {
@@ -161,11 +157,14 @@ export default function Dashboard() {
   async function handleClickMenu(idMenu) {
     const response = await api.get(`items/${idMenu}`);
     setContent(response.data.subMenuItems);
-    console.log(response.data.subMenuItems);
+
+    //Limpa o state checked
+    setChecked([]);
   }
 
+  //Verifica se algum item da lista esta checado
+  const [checked, setChecked] = useState([]);
   function handleToggle(value) {
-    const { checked } = state;
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
@@ -175,8 +174,17 @@ export default function Dashboard() {
       newChecked.splice(currentIndex, 1);
     }
 
-    setState({ checked: newChecked });
+    setChecked(newChecked);
   }
+
+  const [hoverAvatar, setHoverAvatar] = useState(false);
+  const handleHoverAvatarTrue = () => () => {
+    setHoverAvatar(true);
+  };
+
+  const handleHoverAvatarFalse = () => () => {
+    setHoverAvatar(false);
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -233,7 +241,6 @@ export default function Dashboard() {
               <Avatar
                 aria-controls="customized-menu"
                 aria-haspopup="true"
-                variant="contained"
                 onClick={handleClick}
                 color={mainSecondaryColor}
               >
@@ -342,26 +349,37 @@ export default function Dashboard() {
                       <ListItem
                         alignItems="center"
                         onClick={() => handleToggle(content.id)}
-                        onMouseEnter={() => alert("entrou")}
-                        onMouseLeave={() => alert("saiu")}
                         button
                         key={content.id}
+                        onMouseEnter={handleHoverAvatarTrue()}
+                        onMouseLeave={handleHoverAvatarFalse()}
                       >
-                        <ListItemAvatar>
-                          <Avatar className={classes.orange}>
-                            {content.owner}
-                          </Avatar>
-                        </ListItemAvatar>
+                        <Avatar
+                          color="primary"
+                          className={
+                            hoverAvatar || checked.length > 0
+                              ? classes.avatarInvisible
+                              : classes.avatarVisible
+                          }
+                        >
+                          {content.owner}
+                        </Avatar>
+
                         <Checkbox
-                          checked={state.checked.indexOf(content.id) !== -1}
+                          checked={checked.indexOf(content.id) !== -1}
                           color="primary"
                           tabIndex={-1}
                           disableRipple
+                          className={
+                            hoverAvatar || checked.length > 0
+                              ? classes.checkVisible
+                              : classes.checkInvisible
+                          }
                         />
                         <ListItemText
                           primary={content.name}
                           secondary={
-                            <React.Fragment>
+                            <>
                               <Typography
                                 component="span"
                                 className={classes.inline}
@@ -371,7 +389,7 @@ export default function Dashboard() {
                               </Typography>
                               <br />
                               {"Você tem uma nova mensagem"}
-                            </React.Fragment>
+                            </>
                           }
                         />
                         <ListItemSecondaryAction>
