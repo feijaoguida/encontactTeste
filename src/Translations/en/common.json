@@ -1,5 +1,13 @@
 {
   "dashboard": {
-    "title": "Welcome to {{framework}}"
+    "title": "Welcome {{user}}",
+    "buttonExit": "Exit",
+    "buttonAssign": "Assign",
+    "buttonArchive": "Archive",
+    "buttonSchedule": "Schedule",
+    "messageNotInfo": "It is not messages to display.",
+    "newMessage": "You have a new message",
+    "today": "today",
+    "hours": "hours"
   }
 }

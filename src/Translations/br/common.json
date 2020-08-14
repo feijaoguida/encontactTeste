@@ -1,5 +1,13 @@
 {
   "dashboard": {
-    "title": "Bem Vindo ao {{framework}}"
+    "title": "Bem Vindo {{user}}",
+    "buttonExit": "Sair",
+    "buttonAssign": "Atribuir",
+    "buttonArchive": "Arquivar",
+    "buttonSchedule": "Agendar",
+    "messageNotInfo": "Não é mensagens para exibir.",
+    "newMessage": "Você tem uma nova mensagem.",
+    "today": "hoje",
+    "hours": "horas"
   }
 }

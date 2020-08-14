@@ -112,7 +112,7 @@ export const FormikField = styled(Field)`
 `;
 
 export const FormikErrorMessage = styled(ErrorMessage)`
-  color: red;
+  color: #fff;
 `;
 
 export const ButtonSubmit = styled.button`

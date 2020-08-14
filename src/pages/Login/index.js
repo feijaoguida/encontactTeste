@@ -16,7 +16,7 @@ const validations = yup.object().shape({
     .required("Informe um email!"),
   user: yup
     .string()
-    .min(8, "O nome deve conter mais de 8 caracteres!")
+    .min(3, "O nome deve conter mais de 3 caracteres!")
     .required("Informe um nome de Usuário!"),
 });
 

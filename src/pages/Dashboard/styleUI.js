@@ -77,6 +77,20 @@ export const useStyles = makeStyles((theme) => ({
     height: "100vh",
     overflow: "auto",
   },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  search: {
+    marginButton: "10px",
+    padding: "2px 4px",
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+  },
   card: {
     padding: theme.spacing(2),
   },
@@ -88,6 +102,12 @@ export const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "space-between",
     background: "red",
+  },
+  listItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
     marginRight: 10,
@@ -104,10 +124,7 @@ export const useStyles = makeStyles((theme) => ({
     margin: "0 20px",
   },
   container: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(4),
+    padding: theme.spacing(1),
   },
   paper: {
     padding: theme.spacing(2),

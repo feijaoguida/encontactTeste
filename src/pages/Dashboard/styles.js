@@ -138,25 +138,6 @@ export const Search = styled.div`
   }
 `;
 
-export const ButtonSearch = styled(Button)`
-  border: none;
-  float: left;
-  height: 40px;
-  border-radius: 0 7px 7px 0;
-  width: 70px;
-  font-weight: bold;
-  background: #5f9ea0;
-  padding: 0;
-  line-height: 1em;
-  font-size: 0.8571em;
-  border: none;
-  margin: 0;
-  :hover {
-    outline: 0;
-    opacity: 0.9;
-  }
-`;
-
 export const DivActions = styled.div`
   display: flex;
   flex-direction: row;
@@ -231,7 +212,7 @@ export const CardUsers = styled.div`
   background-color: cyan;
   color: blue;
   margin-left: -6px;
-  font-size: 1.2em; 
+  font-size: 1.2em;
   border-radius: 50%;
   border: solid 1px blue;
   padding: 5px;

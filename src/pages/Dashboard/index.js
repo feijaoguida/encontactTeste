@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import clsx from "clsx";
 
 import { withStyles } from "@material-ui/core/styles";
@@ -17,14 +18,14 @@ import Container from "@material-ui/core/Container";
 import { List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { Menu, MenuItem } from "@material-ui/core";
-
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import { Collapse } from "@material-ui/core";
 
 import Checkbox from "@material-ui/core/Checkbox";
 import { Avatar } from "@material-ui/core";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import Card from "@material-ui/core/Card";
+import Paper from "@material-ui/core/Paper";
+import InputBase from "@material-ui/core/InputBase";
 
 // For Switch Theming
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
@@ -38,13 +39,14 @@ import SendIcon from "@material-ui/icons/Send";
 import Icon from "@material-ui/core/Icon";
 import SaveIcon from "@material-ui/icons/Save";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import SearchIcon from "@material-ui/icons/Search";
 
 import { FaFilter } from "react-icons/fa";
 
 import { orange, lightBlue, deepOrange, blue } from "@material-ui/core/colors";
 
 import { useTranslation } from "react-i18next";
-import { getUser } from "../../services/auth";
+import { getUser, logout } from "../../services/auth";
 import { useStyles } from "./styleUI";
 import api from "../../services/api";
 import * as s from "./styles";
@@ -92,16 +94,20 @@ const StyledList = withStyles((theme) => ({
   },
 }))(ListItem);
 
+const userLogged = getUser();
+
 export default function Dashboard() {
+  const [checked, setChecked] = useState({
+    idCheck: [],
+  });
   const [menus, setMenu] = useState([]);
   const [contents, setContent] = useState([]);
   const [colapseOpen, setColapseOpen] = useState(true);
-
-  const userLogged = getUser();
-  const [t, i18n] = useTranslation("common");
-
   const [openDrawer, setOpenDrawer] = useState(true);
   const [darkState, setDarkState] = useState(false);
+
+  const [t, i18n] = useTranslation("common");
+  const history = useHistory();
 
   const palletType = darkState ? "dark" : "light";
   const mainPrimaryColor = darkState ? orange[500] : lightBlue[500];
@@ -117,12 +123,12 @@ export default function Dashboard() {
       },
     },
   });
+
   const classes = useStyles();
 
   const handleThemeChange = () => {
     setDarkState(!darkState);
   };
-
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
   };
@@ -131,7 +137,6 @@ export default function Dashboard() {
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -159,22 +164,30 @@ export default function Dashboard() {
     setContent(response.data.subMenuItems);
 
     //Limpa o state checked
-    setChecked([]);
+    setChecked({
+      idCheck: [],
+    });
+  }
+
+  async function handleClickExit() {
+    logout();
+    history.push("/login");
   }
 
   //Verifica se algum item da lista esta checado
-  const [checked, setChecked] = useState([]);
   function handleToggle(value) {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
+    const { idCheck } = checked;
+    const currentIndex = idCheck.indexOf(value);
+    const newChecked = [...idCheck];
 
     if (currentIndex === -1) {
       newChecked.push(value);
     } else {
       newChecked.splice(currentIndex, 1);
     }
-
-    setChecked(newChecked);
+    setChecked({
+      idCheck: newChecked,
+    });
   }
 
   const [hoverAvatar, setHoverAvatar] = useState(false);
@@ -185,6 +198,20 @@ export default function Dashboard() {
   const handleHoverAvatarFalse = () => () => {
     setHoverAvatar(false);
   };
+
+  function handleArchive(content) {
+    const { idCheck } = checked;
+
+    setContent(
+      contents.filter((item) => {
+        return !idCheck.includes(item.id);
+      })
+    );
+
+    setChecked({
+      idCheck: [],
+    });
+  }
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -214,7 +241,7 @@ export default function Dashboard() {
               noWrap
               className={classes.title}
             >
-              {t("dashboard.title", { usuario: userLogged })}
+              {t("dashboard.title", { user: userLogged })}
             </Typography>
             <Switch checked={darkState} onChange={handleThemeChange} />
             <Button onClick={() => i18n.changeLanguage("br")}>br </Button>
@@ -253,11 +280,11 @@ export default function Dashboard() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <StyledMenuItem>
+                <StyledMenuItem onClick={() => handleClickExit()}>
                   <ListItemIcon>
                     <SendIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText primary="Sent mail" />
+                  <ListItemText primary={t("dashboard.buttonExit")} />
                 </StyledMenuItem>
               </StyledMenu>
             </div>
@@ -270,15 +297,14 @@ export default function Dashboard() {
           <Divider />
           <List>
             {menus.map((menu) => (
-              <>
-                <ListItem button key={menu.id} onClick={handleClickColapse}>
+              <React.Fragment key={menu.id}>
+                <ListItem button onClick={handleClickColapse}>
                   <ListItemIcon>
                     <StarBorder />
                   </ListItemIcon>
                   <ListItemText primary={menu.name} />
-                  {colapseOpen ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
-                <Collapse in={colapseOpen} timeout="auto" unmountOnExit>
+                <Collapse in timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {menu.subMenus.map((submenu) => (
                       <StyledList
@@ -295,13 +321,24 @@ export default function Dashboard() {
                     ))}
                   </List>
                 </Collapse>
-              </>
+              </React.Fragment>
             ))}
           </List>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" className={classes.container}>
+            <Paper component="form" className={classes.search}>
+              <InputBase
+                className={classes.input}
+                placeholder="Search"
+                inputProps={{ "aria-label": "search" }}
+              />
+              <IconButton className={classes.iconButton} aria-label="search">
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+
             <s.DivActions>
               <s.Actions>
                 <Checkbox color="primary" />
@@ -311,15 +348,17 @@ export default function Dashboard() {
                   className={classes.button}
                   startIcon={<SaveIcon />}
                 >
-                  Atribuir
+                  {t("dashboard.buttonAssign")}
                 </Button>
                 <Button
                   variant="contained"
                   color="default"
                   className={classes.button}
                   startIcon={<CloudUploadIcon />}
+                  onClick={() => handleArchive(checked)}
+                  disabled={checked.idCheck.length <= 0}
                 >
-                  Arquivar
+                  {t("dashboard.buttonArchive")}
                 </Button>
                 <Button
                   variant="contained"
@@ -327,7 +366,7 @@ export default function Dashboard() {
                   className={classes.button}
                   endIcon={<Icon>send</Icon>}
                 >
-                  Agendar
+                  {t("dashboard.buttonSchedule")}
                 </Button>
               </s.Actions>
               <s.Filter>
@@ -341,7 +380,9 @@ export default function Dashboard() {
               <List>
                 {contents.length <= 0 ? (
                   <>
-                    <Typography variant="h5">Não há mensagens</Typography>
+                    <Typography variant="h5">
+                      {t("dashboard.messageNotInfo")}
+                    </Typography>
                   </>
                 ) : (
                   <>
@@ -357,7 +398,7 @@ export default function Dashboard() {
                         <Avatar
                           color="primary"
                           className={
-                            hoverAvatar || checked.length > 0
+                            hoverAvatar || checked.idCheck.length > 0
                               ? classes.avatarInvisible
                               : classes.avatarVisible
                           }
@@ -366,12 +407,12 @@ export default function Dashboard() {
                         </Avatar>
 
                         <Checkbox
-                          checked={checked.indexOf(content.id) !== -1}
+                          checked={checked.idCheck.indexOf(content.id) !== -1}
                           color="primary"
                           tabIndex={-1}
                           disableRipple
                           className={
-                            hoverAvatar || checked.length > 0
+                            hoverAvatar || checked.idCheck.length > 0
                               ? classes.checkVisible
                               : classes.checkInvisible
                           }
@@ -380,27 +421,33 @@ export default function Dashboard() {
                           primary={content.name}
                           secondary={
                             <>
-                              <Typography
-                                component="span"
-                                className={classes.inline}
-                                color="textPrimary"
-                              >
+                              <Typography component="span" color="textPrimary">
                                 {content.subject}
                               </Typography>
                               <br />
-                              {"Você tem uma nova mensagem"}
+                              {t("dashboard.newMessage")}
                             </>
                           }
                         />
-                        <ListItemSecondaryAction>
-                          <IconButton aria-label="Comments">
-                            <SaveIcon />
-                          </IconButton>
+                        <ListItemSecondaryAction className={classes.listItem}>
+                          <Typography
+                            className={classes.inline}
+                            component="span"
+                            color="textPrimary"
+                          >
+                            {t("dashboard.today")}, 11:42
+                          </Typography>
+
+                          <Typography
+                            className={classes.inline}
+                            component="span"
+                            color="textPrimary"
+                          >
+                            -2 {t("dashboard.hours")}
+                          </Typography>
                           <AvatarGroup max={3}>
                             {content.users.map((user) => (
-                              <Avatar className={classes.orange} key={user}>
-                                {user}
-                              </Avatar>
+                              <Avatar key={user}>{user}</Avatar>
                             ))}
                           </AvatarGroup>
                         </ListItemSecondaryAction>
