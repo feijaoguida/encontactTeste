@@ -109,6 +109,9 @@ export const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  nested: {
+    paddingLeft: theme.spacing(3),
+  },
   button: {
     marginRight: 10,
   },

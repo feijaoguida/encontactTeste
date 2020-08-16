@@ -94,7 +94,7 @@ const StyledList = withStyles((theme) => ({
   },
 }))(ListItem);
 
-const userLogged = getUser();
+let userLogged = getUser();
 
 export default function Dashboard() {
   const [checked, setChecked] = useState({
@@ -156,7 +156,23 @@ export default function Dashboard() {
       setMenu(response.data);
     }
     loadMenus();
+    userLogged = getUser();
   }, []);
+
+  const { idCheck } = checked;
+
+  const handleToggleAll = () => () => {
+    const { idCheck } = checked;
+    const idContent = [];
+    if (idCheck.length === contents.length) {
+      setChecked({ idCheck: [] });
+    } else {
+      contents.map((content) => idContent.push(content.id));
+      setChecked({
+        idCheck: idContent,
+      });
+    }
+  };
 
   //load itens do menu e carraga o estado Contents
   async function handleClickMenu(idMenu) {
@@ -199,7 +215,7 @@ export default function Dashboard() {
     setHoverAvatar(false);
   };
 
-  function handleArchive(content) {
+  function handleArchive() {
     const { idCheck } = checked;
 
     setContent(
@@ -316,7 +332,10 @@ export default function Dashboard() {
                         <ListItemIcon>
                           <SendIcon />
                         </ListItemIcon>
-                        <ListItemText primary={submenu.name} />
+                        <ListItemText
+                          className={classes.nested}
+                          primary={submenu.name}
+                        />
                       </StyledList>
                     ))}
                   </List>
@@ -341,7 +360,17 @@ export default function Dashboard() {
 
             <s.DivActions>
               <s.Actions>
-                <Checkbox color="primary" />
+                <Checkbox
+                  onClick={handleToggleAll(contents)}
+                  checked={
+                    idCheck.length === contents.length && contents.length !== 0
+                  }
+                  indeterminate={
+                    idCheck.length !== contents.length && idCheck.length !== 0
+                  }
+                  disabled={contents.length === 0}
+                  color="primary"
+                />
                 <Button
                   variant="contained"
                   color="primary"
